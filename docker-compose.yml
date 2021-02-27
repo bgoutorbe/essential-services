@@ -30,7 +30,7 @@ services:
     restart: unless-stopped
 
   gogs:
-    image: gogs/gogs
+    image: gogs/gogs:0.12.1
     container_name: gogs
     networks:
     - essential-services-network
