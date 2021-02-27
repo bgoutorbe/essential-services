@@ -1,8 +1,8 @@
 version: '3.5'
 
 networks:
-  cmarb-net:
-    name: cmarb-net
+  essential-services-network:
+    name: essential-services-network
 
 volumes:
   jenkins_data:
@@ -18,7 +18,7 @@ services:
     container_name: jenkins
     user: "${UID_JENKINS_DOCKER}:${GID_JENKINS_DOCKER}"
     networks:
-    - cmarb-net
+    - essential-services-network
     ports:
     - "8080:8080"
     - "50000:50000"
@@ -27,25 +27,28 @@ services:
     - /var/run/docker.sock:/var/run/docker.sock
     environment:
     - JAVA_OPTS="-Dorg.apache.commons.jelly.tags.fmt.timeZone=Europe/Paris"
+    restart: unless-stopped
 
   gogs:
     image: gogs/gogs
     container_name: gogs
     networks:
-    - cmarb-net
+    - essential-services-network
     ports:
     - "10022:22"
     - "3000:3000"
     volumes:
     - gogs_data:/data
+    restart: unless-stopped
 
   portainer:
     image: portainer/portainer
     container_name: portainer
     networks:
-    - cmarb-net
+    - essential-services-network
     ports:
     - "9000:9000"
     volumes:
     - portainer_data:/data
     - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
