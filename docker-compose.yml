@@ -1,0 +1,51 @@
+version: '3.5'
+
+networks:
+  cmarb-net:
+    name: cmarb-net
+
+volumes:
+  jenkins_data:
+    name: jenkins_data
+  gogs_data:
+    name: gogs_data
+  portainer_data:
+    name: portainer_data
+
+services:
+  jenkins:
+    image: h1kkan/jenkins-docker:lts-alpine
+    container_name: jenkins
+    user: "${UID_JENKINS_DOCKER}:${GID_JENKINS_DOCKER}"
+    networks:
+    - cmarb-net
+    ports:
+    - "8080:8080"
+    - "50000:50000"
+    volumes:
+    - jenkins_data:/var/jenkins_home
+    - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+    - JAVA_OPTS="-Dorg.apache.commons.jelly.tags.fmt.timeZone=Europe/Paris"
+
+  gogs:
+    image: gogs/gogs
+    container_name: gogs
+    networks:
+    - cmarb-net
+    ports:
+    - "10022:22"
+    - "3000:3000"
+    volumes:
+    - gogs_data:/data
+
+  portainer:
+    image: portainer/portainer
+    container_name: portainer
+    networks:
+    - cmarb-net
+    ports:
+    - "9000:9000"
+    volumes:
+    - portainer_data:/data
+    - /var/run/docker.sock:/var/run/docker.sock
